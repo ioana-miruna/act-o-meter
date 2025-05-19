@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Movie Details - IMDb Clone</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1 th:text="${movie.title}">Movie Title</h1>
+        <nav>
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/movies}">All Movies</a>
+            <span sec:authorize="isAuthenticated()">
+                    <a th:href="@{/logout}">Logout</a>
+                </span>
+            <span sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}">Login</a>
+                    <a th:href="@{/register}">Register</a>
+                </span>
+        </nav>
+    </header>
+
+    <div class="movie-details">
+        <div class="movie-info">
+            <p class="description" th:text="${movie.description}">Movie description...</p>
+
+            <div class="rating-info">
+                <h3>Ratings</h3>
+                <div th:if="${averageRating != null}">
+                    <p th:text="${'Average Rating: ' + #numbers.formatDecimal(averageRating, 1, 1) + '/5'}">Average Rating: 4.5/5</p>
+                </div>
+                <div th:unless="${averageRating != null}">
+                    <p>No ratings yet</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="rate-movie" sec:authorize="isAuthenticated()">
+            <h3>Rate this movie</h3>
+            <form th:action="@{'/movies/' + ${movie.id} + '/rate'}" method="post">
+                <div class="rating-stars">
+                    <input type="radio" id="star5" name="rating" value="5" /><label for="star5">5 stars</label>
+                    <input type="radio" id="star4" name="rating" value="4" /><label for="star4">4 stars</label>
+                    <input type="radio" id="star3" name="rating" value="3" /><label for="star3">3 stars</label>
+                    <input type="radio" id="star2" name="rating" value="2" /><label for="star2">2 stars</label>
+                    <input type="radio" id="star1" name="rating" value="1" /><label for="star1">1 star</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Rating</button>
+            </form>
+        </div>
+
+        <div class="login-prompt" sec:authorize="!isAuthenticated()">
+            <p>Please <a th:href="@{/login}">login</a> to rate this movie.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

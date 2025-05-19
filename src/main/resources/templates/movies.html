@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Movies - IMDb Clone</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Movies Collection</h1>
+        <nav>
+            <a th:href="@{/}">Home</a>
+            <span sec:authorize="isAuthenticated()">
+                    <a th:href="@{/logout}">Logout</a>
+                </span>
+            <span sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}">Login</a>
+                    <a th:href="@{/register}">Register</a>
+                </span>
+        </nav>
+    </header>
+
+    <div class="movies-container">
+        <div th:if="${movies == null or movies.empty}" class="no-movies">
+            <p>No movies found.</p>
+        </div>
+
+        <div th:if="${movies != null and !movies.empty}" class="movie-list">
+            <div th:each="movie : ${movies}" class="movie-card">
+                <h2 th:text="${movie.title}">Movie Title</h2>
+                <p class="description" th:text="${movie.description}">Movie description...</p>
+                <div class="rating" th:if="${movie.ratings != null and !movie.ratings.empty}">
+                    <span th:text="'Average Rating: ' + ${movie.averageRating} + '/5'"></span>
+                </div>
+                <div class="rating" th:unless="${movie.ratings != null and !movie.ratings.empty}">
+                    <p>No ratings yet</p>
+                </div>
+                <a th:href="@{'/movies/' + ${movie.id}}" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
